@@ -1,7 +1,7 @@
 # Generic-ArrayToUL
 Convert any array into an html unordered list, keeping the same structure.
 
-This package uses jQuery and allows you to output the list both in a form a full html page or just the <ul> element itself.
+This package uses jQuery and allows you to output the list both in a form a full html page or just the ul element itself.
 
 The javascript is for a toggle button that is added to the main root if flag supplied with true.
 
