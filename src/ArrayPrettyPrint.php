@@ -36,14 +36,19 @@ class ArrayPrettyPrint
         $scriptTag = $this->dom->createElement('script');
         $scriptTag->setAttribute('src', 'http://code.jquery.com/jquery-2.0.3.js');
 
+        $scriptTag2 = $this->dom->createElement('script');
+        $scriptTag2->setAttribute('src', '../JS/toggler.js');
+
         $head = $this->dom->createElement('head');
         if ($css = $this->getCSS(!$includeCss))
             $head->appendChild($css);
 
+        $head->appendChild($scriptTag);
+        $head->appendChild($scriptTag2);
+
         $this->html
             ->appendChild($head)
-            ->appendChild(new DOMElement('title', 'output html'))
-            ->parentNode->appendChild($scriptTag);
+            ->appendChild(new DOMElement('title', 'output html'));
 
         return $this->html;
     }
@@ -86,7 +91,7 @@ class ArrayPrettyPrint
         $className = "depth_0";
 
         $dataIterator = new \RecursiveIteratorIterator(
-            new RecursiveCachingIterator(new \RecursiveArrayIterator($data)),
+            new \RecursiveArrayIterator($data),
             \RecursiveIteratorIterator::SELF_FIRST,
             \RecursiveIteratorIterator::CATCH_GET_CHILD
         );
@@ -97,11 +102,16 @@ class ArrayPrettyPrint
 
                 if ($dataIterator->getDepth() > 0) {
                     $className = "depth_" . ($dataIterator->getDepth() - 1);
+                    $matchedClass = array();
+                    foreach ($this->unorderedList->getElementsByTagName("ul") as $node) {
+                        /* @var $node DOMElement */
+                        if ($node->getAttribute('class') == $className)
+                            $matchedClass[] = $node;
+                    }
                 }
 
-                $finder = new \DOMXPath($this->dom);
-                $nodes = $finder->query("//*[contains(@class, '$className')]");
-                $currentParent = $nodes->item($nodes->length - 1);
+                // hopefully will find the last element with matched class
+                $currentParent = array_pop($matchedClass);
 
                 if (!$currentParent /*|| $dataIterator->getDepth() == $previousDepth*/) {
                     $ul = $this->dom->createElement("ul");
@@ -136,10 +146,14 @@ class ArrayPrettyPrint
                 $isDeeper = $previousDepth < $dataIterator->getDepth();
                 if (!$isDeeper) {
                     $className = "depth_" . ($dataIterator->getDepth() - 1);
-                    //$finder = new \DOMXPath($this->unorderedList);
-                    $finder = new \DOMXPath($this->dom);
-                    $nodes = $finder->query("//ul[contains(@class, '$className')]");
-                    $ulNew = $nodes->item($nodes->length - 1);
+                    $matchedClass = array();
+                    foreach ($this->unorderedList->getElementsByTagName("ul") as $node) {
+                        /* @var $node DOMElement */
+                        if ($node->getAttribute('class') == $className)
+                            $matchedClass[] = $node;
+                    }
+                    $ulNew = array_pop($matchedClass);
+
                     $ul = $ulNew ? $ulNew : $ul;
                 }
 
@@ -155,7 +169,7 @@ class ArrayPrettyPrint
     public function asHTML($wrapWithPage = false, $includeCSS = false, $includeToggleButton = false)
     {
         if (!$this->unorderedList)
-                throw new Exception("Must prettify first!");
+            throw new Exception("Must prettify first!");
 
         if ($includeToggleButton) {
             $this->generateToggleButton();
@@ -163,7 +177,6 @@ class ArrayPrettyPrint
 
         if (!$wrapWithPage)
             return $this->unorderedList->saveHTML();
-
 
         $body = $this->dom->createElement('body');
         $body->appendChild($this->unorderedList);
@@ -182,11 +195,11 @@ class ArrayPrettyPrint
         if ($this->css) return $this->css;
 
         $cssData = array(
-            "\t\tul { color:#eee; }",
-            "\t\tul { font-size:18px; }",
-            "\t\tul li { }",
-            "\t\tul li { list-style-image: url('''); padding:5px 0 5px 18px; font-size:15px; }",
-            "\t\tul li { color:black; height:23px; margin-left:10px; }"
+            "\tul { color:#eee; }",
+            "\tul { font-size:18px; }",
+            "\tul li { }",
+            "\tul li { list-style-image: url('''); padding:5px 0 5px 18px; font-size:15px; }",
+            "\tul li { color:black; height:23px; margin-left:10px; }"
         );
 
         return $this->css = new DOMElement('style', implode("\n", $cssData));
