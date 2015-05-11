@@ -39,18 +39,16 @@ class ArrayPrettyPrint
         $scriptTag2 = $this->dom->createElement('script');
         $scriptTag2->setAttribute('src', '../JS/toggler.js');
 
-
         $head = $this->dom->createElement('head');
         if ($css = $this->getCSS(!$includeCss))
             $head->appendChild($css);
 
+        $head->appendChild($scriptTag);
         $head->appendChild($scriptTag2);
 
         $this->html
             ->appendChild($head)
-            ->appendChild(new DOMElement('title', 'output html'))
-            ->parentNode->appendChild($scriptTag);
-
+            ->appendChild(new DOMElement('title', 'output html'));
 
         return $this->html;
     }
@@ -180,7 +178,6 @@ class ArrayPrettyPrint
         if (!$wrapWithPage)
             return $this->unorderedList->saveHTML();
 
-
         $body = $this->dom->createElement('body');
         $body->appendChild($this->unorderedList);
         $this->startHTML($includeCSS)->appendChild($body);
@@ -198,11 +195,11 @@ class ArrayPrettyPrint
         if ($this->css) return $this->css;
 
         $cssData = array(
-            "\t\tul { color:#eee; }",
-            "\t\tul { font-size:18px; }",
-            "\t\tul li { }",
-            "\t\tul li { list-style-image: url('''); padding:5px 0 5px 18px; font-size:15px; }",
-            "\t\tul li { color:black; height:23px; margin-left:10px; }"
+            "\tul { color:#eee; }",
+            "\tul { font-size:18px; }",
+            "\tul li { }",
+            "\tul li { list-style-image: url('''); padding:5px 0 5px 18px; font-size:15px; }",
+            "\tul li { color:black; height:23px; margin-left:10px; }"
         );
 
         return $this->css = new DOMElement('style', implode("\n", $cssData));

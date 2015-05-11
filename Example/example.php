@@ -6,31 +6,39 @@
  * Time: 10:28 PM
  */
 
+/* Include main file */
 $baseDir = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR;
 $fileName = $baseDir . "src" . DIRECTORY_SEPARATOR . "ArrayPrettyPrint.php";
 include $fileName;
 
+/* Debugging!! */
 $fileName = $baseDir . DIRECTORY_SEPARATOR . "Example" . DIRECTORY_SEPARATOR . "data.txt";
 $data = unserialize(file_get_contents($fileName));
+/* Debugging!! */
 
+/* Instantiate prettier */
 $instance = ArrayPrettyPrint::factory($data);
 $output = $instance->prettify()->asHTML(true, true, true);
 
-/*$msgs = array(
-    "This CSS is set by default (if flag was provided and set to true).",
-    $instance->getCSS() . "\n\n",
-    "Use ->setCss to override. style tag can also be emitted with a flag",
-    "In order to generate the list, a simple 'echo \$instance->prettify()->asHTML(true, true);' will do the trick.",
-    "\t\tfirst true is to include css, 2ed it to include toggle button. See JS folder for jquery usage.",
-    "The generated list is as follows (will also be saved into index.html):\n",
-);*/
+/* some tl;dr */
+$msgs = array(
+    str_repeat("=", 100),
+    " * This CSS is set by default (if flag was provided and set to true).",
+    $instance->getCSS()->nodeValue . "\n\n",
+    " \t~ Use ->setCss to override. style tag can also be emitted with a flag",
+    " * In order to generate the list, a simple 'echo \$instance->prettify()->asHTML(true, true);' will do the trick.",
+    " \t~ first true is to include css, 2ed it to include toggle button. See JS folder for jquery usage.",
+    " * [--CLIPPED--]The generated list is as follows (will also be saved into index.html):\n",
+    str_repeat("=", 100) . "\n"
+);
 
-//echo implode("\n", $msgs) . "\n\n";
-$output = $instance->prettify()->asHTML(true, true);
+echo implode(PHP_EOL, $msgs);
 
-$f = __DIR__ . DIRECTORY_SEPARATOR . 'HTML' . DIRECTORY_SEPARATOR . 'index3.html';
+/* Save into html flie */
+$f = $baseDir . "Example" . DIRECTORY_SEPARATOR . "HTML" . DIRECTORY_SEPARATOR . "index.html";
 $h = fopen($f, "w+");
-fwrite($h, $output);
+if(ftruncate($h, 0))
+    fwrite($h, $output);
 fclose($h);
 
-echo "Content was saved into index.html\n\n";
+echo "Content was saved into $fileName\n\n";
