@@ -126,7 +126,7 @@ class ArrayPrettyPrint
                 /* Both the title and the new group are appended to the current parent */
 
                 /* The title of the group */
-                $li = $this->dom->createElement('li', $k . (is_array($v) ? "" : ": $v"));
+                $li = $this->dom->createElement('li', $k . (is_array($v) ? (empty($v) ? "  [Empty]" : "") : ": $v"));
                 $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth());
                 $li->setAttribute('ref', 'title_sub_depth');
                 $currentParent->appendChild($li);
@@ -157,7 +157,7 @@ class ArrayPrettyPrint
                     $ul = $ulNew ? $ulNew : $ul;
                 }
 
-                $li = $this->dom->createElement('li', $dataIterator->key() . ": " . $dataIterator->current());
+                $li = $this->dom->createElement('li', $dataIterator->key() . ": " . ($dataIterator->current() ? $dataIterator->current() : "N/A"));
                 $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth());
                 $ul->appendChild($li);
             }
