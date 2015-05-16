@@ -111,9 +111,7 @@ class ArrayPrettyPrint
                     }
                 }
 
-                // hopefully will find the last element with matched class
                 $currentParent = array_pop($matchedClass);
-
                 if (!$currentParent /*|| $dataIterator->getDepth() == $previousDepth*/) {
                     $ul = $this->dom->createElement("ul");
                     $ul->setAttribute('class', 'depth_' . $dataIterator->getDepth());
@@ -127,24 +125,17 @@ class ArrayPrettyPrint
                 /* Both the title and the new group are appended to the current parent */
 
                 /* The title of the group */
-
-
-                /*$valueContainer = $this->dom->createElement('span', "");
-                if (is_array($v)){
+                $valueContainer = $this->dom->createElement('span', $k);
+                if (is_array($v))
                     if (empty($v)){
-                        $codeElement = $this->dom->createElement("code" , $k . " [Empty]");
+                        $codeElement = $this->dom->createElement("code" , "[Empty]");
                         $valueContainer->appendChild($codeElement);
                     }
-                } else {
-                    $valueContainer->textContent = $k;
-                }
 
                 $li = $this->dom->createElement('li');
-                $li->appendChild($valueContainer);*/
-
-                $li = $this->dom->createElement('li', $k . (is_array($v) ? (empty($v) ? "  [Empty]" : "") : ": $v"));
                 $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth());
                 $li->setAttribute('ref', 'title_sub_depth');
+                $li->appendChild($valueContainer);
                 $currentParent->appendChild($li);
 
                 /* new group container */
@@ -168,13 +159,14 @@ class ArrayPrettyPrint
                         if ($node->getAttribute('class') == $className)
                             $matchedClass[] = $node;
                     }
-                    $ulNew = array_pop($matchedClass);
 
+                    $ulNew = array_pop($matchedClass);
                     $ul = $ulNew ? $ulNew : $ul;
                 }
 
                 $li = $this->dom->createElement('li', $dataIterator->key() . ": " . ($dataIterator->current() ? $dataIterator->current() : "N/A"));
-                $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth());
+                $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth() . " regular-item");
+                $li->setAttribute('depth', $dataIterator->getDepth());
                 $ul->appendChild($li);
             }
         }
