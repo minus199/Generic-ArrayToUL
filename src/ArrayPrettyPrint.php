@@ -37,11 +37,12 @@ class ArrayPrettyPrint
         $scriptTag->setAttribute('src', 'http://code.jquery.com/jquery-2.0.3.js');
 
         $scriptTag2 = $this->dom->createElement('script');
-        $scriptTag2->setAttribute('src', '../JS/toggler.js');
+        $scriptTag2->setAttribute('src', '../../Resources/JS/toggler.js');
 
         $head = $this->dom->createElement('head');
         if ($css = $this->getCSS(!$includeCss))
-            $head->appendChild($css);
+            foreach ($css as $file)
+                $head->appendChild($file);
 
         $head->appendChild($scriptTag);
         $head->appendChild($scriptTag2);
@@ -126,6 +127,21 @@ class ArrayPrettyPrint
                 /* Both the title and the new group are appended to the current parent */
 
                 /* The title of the group */
+
+
+                /*$valueContainer = $this->dom->createElement('span', "");
+                if (is_array($v)){
+                    if (empty($v)){
+                        $codeElement = $this->dom->createElement("code" , $k . " [Empty]");
+                        $valueContainer->appendChild($codeElement);
+                    }
+                } else {
+                    $valueContainer->textContent = $k;
+                }
+
+                $li = $this->dom->createElement('li');
+                $li->appendChild($valueContainer);*/
+
                 $li = $this->dom->createElement('li', $k . (is_array($v) ? (empty($v) ? "  [Empty]" : "") : ": $v"));
                 $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth());
                 $li->setAttribute('ref', 'title_sub_depth');
@@ -166,43 +182,60 @@ class ArrayPrettyPrint
         return $this;
     }
 
-    public function asHTML($wrapWithPage = false, $includeCSS = false, $includeToggleButton = false)
+    public function asHTML($wrapWithPage = false, $includeCSS = false, $includeToggleButton = false, $prettifyHTML = true)
     {
         if (!$this->unorderedList)
             throw new Exception("Must prettify first!");
 
-        if ($includeToggleButton) {
-            $this->generateToggleButton();
-        }
 
         if (!$wrapWithPage)
             return $this->unorderedList->saveHTML();
 
         $body = $this->dom->createElement('body');
+        if ($includeToggleButton) {
+            $body->appendChild($this->generateToggleButton());
+        }
+
         $body->appendChild($this->unorderedList);
         $this->startHTML($includeCSS)->appendChild($body);
 
         $this->dom->appendChild($this->html);
 
+        if ($prettifyHTML) {
+            $this->dom->formatOutput = true;
+            $this->dom->preserveWhiteSpace = false;
+            $opts = array(
+                'indent' => TRUE,
+                'input-xml' => TRUE,
+                'output-html' => TRUE,
+                'add-xml-space' => FALSE,
+                'indent-spaces' => 4
+            );
+
+            return tidy_parse_string($this->dom->saveHTML(), $opts);
+        }
+
         return $this->dom->saveHTML();
     }
 
-    public function getCSS($disable = false)
+    public function getCSS()
     {
-        if ($disable)
-            throw new Exception("CSS was disabled but usage still exists.");
-
         if ($this->css) return $this->css;
 
-        $cssData = array(
-            "\tul { color:#eee; }",
-            "\tul { font-size:18px; }",
-            "\tul li { }",
-            "\tul li { list-style-image: url('''); padding:5px 0 5px 18px; font-size:15px; }",
-            "\tul li { color:black; height:23px; margin-left:10px; }"
-        );
+        $dirName = dirname(__DIR__) . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR . "CSS";
+        $output = array();
+        foreach (scandir($dirName) as $cssFile){
+            if ($cssFile == "." || $cssFile == "..")
+                continue;
 
-        return $this->css = new DOMElement('style', implode("\n", $cssData));
+            $link = $this->dom->createElement('link');
+            $link->setAttribute('rel', 'stylesheet');
+            $link->setAttribute('type', 'text/css');
+            $link->setAttribute('href', '../../Resources/CSS/' . $cssFile);
+            $output[] = $link;
+        }
+
+        return $output;
     }
 
     public function setCSS($css)
@@ -214,11 +247,13 @@ class ArrayPrettyPrint
     private function generateToggleButton()
     {
         $toggleButton = $this->dom->createElement('input');
-        $toggleButton->setAttribute('ref', 'collapsedTrue');
+        $toggleButton->setAttribute('class', 'collapsedTrue');
         $toggleButton->setAttribute('type', 'button');
         $toggleButton->setAttribute('value', '+');
         $toggleButton->setAttribute('id', 'toggleTree');
-        $this->getUnorderedList()->firstChild->firstChild->appendChild($toggleButton);
+        $toggleButton->setAttribute('style', 'position:fixed;');
+
+        return $toggleButton;
     }
 
     /**

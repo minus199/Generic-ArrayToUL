@@ -12,13 +12,15 @@ $fileName = $baseDir . "src" . DIRECTORY_SEPARATOR . "ArrayPrettyPrint.php";
 include $fileName;
 
 /* Debugging!! */
-$fileName = $baseDir . DIRECTORY_SEPARATOR . "Example" . DIRECTORY_SEPARATOR . "data.txt";
+$fileName = $baseDir . "Resources" . DIRECTORY_SEPARATOR . "data.txt";
+if (!file_exists($fileName))
+    throw new \Exception("Please include serialized array in data.txt inside folder " . $baseDir . "Resources");
 $data = unserialize(file_get_contents($fileName));
 /* Debugging!! */
 
 /* Instantiate prettier */
 $instance = ArrayPrettyPrint::factory($data);
-$output = $instance->prettify()->asHTML(true, true, true);
+$output = $instance->prettify()->asHTML(true, true, true, false);
 
 /* some tl;dr */
 $msgs = array(
@@ -29,7 +31,7 @@ $msgs = array(
     " * In order to generate the list, a simple 'echo \$instance->prettify()->asHTML(true, true);' will do the trick.",
     " \t~ first true is to include css, 2ed it to include toggle button. See JS folder for jquery usage.",
     " * [--CLIPPED--]The generated list is as follows (will also be saved into index.html):\n",
-    str_repeat("=", 100) . "\n"
+    str_repeat("=", 100) . "\n\n\n"
 );
 
 echo implode(PHP_EOL, $msgs);
@@ -40,5 +42,6 @@ $h = fopen($f, "w+");
 if(ftruncate($h, 0))
     fwrite($h, $output);
 fclose($h);
+echo $output . "\n\n" . str_repeat("=", 100) . "\n";
 
 echo "Content was saved into $fileName\n\n";
