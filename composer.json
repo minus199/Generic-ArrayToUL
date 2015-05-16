@@ -1,0 +1,12 @@
+{
+    "name": "root/generic_array-to-ul",
+    "description": "Convert any assoc array into formated ul list",
+    "authors": [
+        {
+            "name": "MiNuS",
+            "email": "minus199@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
