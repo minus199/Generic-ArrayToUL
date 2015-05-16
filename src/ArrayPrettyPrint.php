@@ -125,7 +125,7 @@ class ArrayPrettyPrint
                 /* Both the title and the new group are appended to the current parent */
 
                 /* The title of the group */
-                $valueContainer = $this->dom->createElement('span', $k);
+                $valueContainer = $this->dom->createElement('span', ucfirst($k));
                 if (is_array($v))
                     if (empty($v)){
                         $codeElement = $this->dom->createElement("code" , "[Empty]");

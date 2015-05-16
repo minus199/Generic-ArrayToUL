@@ -25,19 +25,19 @@
             );
 
             $(this).click(function () {
-                $(this).next("ul").toggle();
+                $(this).next("ul").fadeToggle("fast", "linear");
             });
 
-            $(this).next("ul").hide();
+            $(this).next("ul").fadeOut("fast", "linear");
         });
     }
 
     function toggleProjectTree($container, $button) {
         if ($button.attr("class") == "collapsedTrue"){
-            $container.first().children().find("ul:hidden").show();
+            $container.first().children().find("ul:hidden").fadeIn("fast", "linear");
             $button.attr("class", "collapsedFalse").val("-");
         } else {
-            $container.first().children().find("ul:visible").hide();
+            $container.first().children().find("ul:visible").fadeOut("fast", "linear");
             $button.attr("class", "collapsedTrue").val("+");
         }
     }
