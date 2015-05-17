@@ -1,5 +1,5 @@
 {
-  "name": "root/generic_array-to-ul",
+  "name": "minus199/php_array_to_ul",
   "description": "Convert any assoc array into formatted ul list",
   "authors": [
     {
@@ -12,7 +12,7 @@
   "repositories": [
     {
       "type": "git",
-      "url": "http://github.com/minus199/Generic-ArrayToUL.git"
+      "url": "https://github.com/minus199/php_array_to_ul.git"
     }
   ]
 }
