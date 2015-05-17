@@ -7,7 +7,7 @@ There's a toggle button that is added to the main root of the list if flag suppl
 
 The whole point of this package is to allow converting any array to a pretty output which can also be maniuplated easliy with javascript.
 
-<u>Tip:</u> it's fairly simple to change the <ul><li> into any other <parent><child> elements. Like <div><span>.
+<u>Tip:</u> it's fairly simple to change the ul/li into any other parent/child elements. Like div/span.
 The functionality to choose which elements will be used is planned to added at some point.
 
 <b>Install with composer</b>
