@@ -14,7 +14,7 @@ class ArrayPrettyPrint
      */
     private $unorderedList;
     /**
-     * @var DOMElement
+     * @var \DOMElement
      */
     private $html;
     private $dom;
@@ -25,7 +25,7 @@ class ArrayPrettyPrint
 
     public function __construct($id = 'recursive')
     {
-        $this->dom = new DOMDocument('', 'utf-8');
+        $this->dom = new \DOMDocument('', 'utf-8');
         $this->unorderedList = $this->dom->createElement('ul');
         $this->unorderedList->setAttribute('id', $id);
     }
@@ -50,7 +50,7 @@ class ArrayPrettyPrint
 
         $this->html
             ->appendChild($head)
-            ->appendChild(new DOMElement('title', 'output html'));
+            ->appendChild(new \DOMElement('title', 'output html'));
 
         return $this->html;
     }
@@ -106,7 +106,7 @@ class ArrayPrettyPrint
                     $className = "depth_" . ($dataIterator->getDepth() - 1);
                     $matchedClass = array();
                     foreach ($this->unorderedList->getElementsByTagName("ul") as $node) {
-                        /* @var $node DOMElement */
+                        /* @var $node \DOMElement */
                         if ($node->getAttribute('class') == $className)
                             $matchedClass[] = $node;
                     }
@@ -156,7 +156,7 @@ class ArrayPrettyPrint
                     $className = "depth_" . ($dataIterator->getDepth() - 1);
                     $matchedClass = array();
                     foreach ($this->unorderedList->getElementsByTagName("ul") as $node) {
-                        /* @var $node DOMElement */
+                        /* @var $node \DOMElement */
                         if ($node->getAttribute('class') == $className)
                             $matchedClass[] = $node;
                     }
@@ -178,7 +178,7 @@ class ArrayPrettyPrint
     public function asHTML($wrapWithPage = false, $includeCSS = false, $includeToggleButton = false, $prettifyHTML = true)
     {
         if (!$this->unorderedList)
-            throw new Exception("Must prettify first!");
+            throw new \Exception("Must prettify first!");
 
 
         if (!$wrapWithPage)
