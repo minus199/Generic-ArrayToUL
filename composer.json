@@ -1,6 +1,8 @@
 {
   "name": "minus199/php_array_to_ul",
   "description": "Convert any assoc array into formatted ul list",
+  "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "name": "MiNuS",
@@ -14,5 +16,8 @@
       "type": "git",
       "url": "https://github.com/minus199/php_array_to_ul.git"
     }
-  ]
+  ],
+  "autoload": {
+      "psr-4": {"MiNuS199\\": "src/ArrayPrettyPrint"}
+  }
 }

@@ -1,5 +1,6 @@
 <?php
 
+namespace MiNuS199;
 /**
  * Created by PhpStorm.
  * User: minus
