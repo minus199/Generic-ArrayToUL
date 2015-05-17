@@ -24,19 +24,4 @@ The functionality to choose which elements will be used is planned to added at s
 }
 </pre>
 
-
-# Install with composer
-{
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/minus199/php_array_to_ul.git"
-    }
-  ],
-  "require": {
-    "minus199/php_array_to_ul": "dev-master"
-  }
-}
-
-
 Feel free to contact me at minus199@gmail.com  
