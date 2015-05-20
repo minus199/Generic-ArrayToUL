@@ -11,8 +11,31 @@
             $("#toggleTree").click(function () {
                 toggleProjectTree($container, $(this));
             });
+
+            draggableDroppable();
         }
     );
+
+    function draggableDroppable(){
+        $(".regular-item").draggable(
+            {
+                revert: true,
+                cursor:'move',
+                start: function( event, ui ) { $(this).toggleClass('hovering-item'); },
+                stop: function( event, ui ) { $(this).toggleClass('hovering-item'); }
+            }
+        );
+        $("#tempContainer").droppable(
+            {
+                drop: function( event, ui ) {
+                    var $newListItem = $("<li/>", {text: ui.draggable.text()});
+                    $(this).append($newListItem);
+                },
+                tolerance: "pointer",
+                accept: '.regular-item'
+            }
+        ).sortable();
+    }
 
     function makeItToggle($container) {
         $.each($container.find("[ref='title_sub_depth']"), function () {
@@ -25,7 +48,10 @@
             );
 
             $(this).click(function () {
-                $(this).next("ul").fadeToggle("fast", "linear");
+                $(this).next("ul").fadeToggle("fast", "linear", function(){
+                    if(!$(this).next("ul").is(":visible"))
+                        $(this).children("ul:visible").hide();
+                });
             });
 
             $(this).next("ul").fadeOut("fast", "linear");

@@ -34,23 +34,8 @@ class ArrayPrettyPrint
     {
         $this->html = $this->dom->createElement('html');
 
-        $scriptTag = $this->dom->createElement('script');
-        $scriptTag->setAttribute('src', 'http://code.jquery.com/jquery-2.0.3.js');
-
-        $scriptTag2 = $this->dom->createElement('script');
-        $scriptTag2->setAttribute('src', '../../Resources/JS/toggler.js');
-
-        $head = $this->dom->createElement('head');
-        if ($css = $this->getCSS(!$includeCss))
-            foreach ($css as $file)
-                $head->appendChild($file);
-
-        $head->appendChild($scriptTag);
-        $head->appendChild($scriptTag2);
-
         $this->html
-            ->appendChild($head)
-            ->appendChild(new \DOMElement('title', 'output html'));
+            ->appendChild($this->createHead($includeCss));
 
         return $this->html;
     }
@@ -165,7 +150,9 @@ class ArrayPrettyPrint
                     $ul = $ulNew ? $ulNew : $ul;
                 }
 
-                $li = $this->dom->createElement('li', $dataIterator->key() . ": " . ($dataIterator->current() ? $dataIterator->current() : "N/A"));
+                $li = $this->dom->createElement('li');
+                $liText = $this->dom->createTextNode($dataIterator->key() . ": " . ($dataIterator->current() !== null && $dataIterator->current() !== false ? $dataIterator->current() : "N/A"));
+                $li->appendChild($liText);
                 $li->setAttribute('class', 'sub_depth_' . $dataIterator->getDepth() . " regular-item");
                 $li->setAttribute('depth', $dataIterator->getDepth());
                 $ul->appendChild($li);
@@ -185,6 +172,11 @@ class ArrayPrettyPrint
             return $this->unorderedList->saveHTML();
 
         $body = $this->dom->createElement('body');
+
+        $droppableContainer = $this->dom->createElement('ul');
+        $droppableContainer->setAttribute('id', 'tempContainer');
+        $body->appendChild($droppableContainer);
+
         if ($includeToggleButton) {
             $body->appendChild($this->generateToggleButton());
         }
@@ -221,14 +213,11 @@ class ArrayPrettyPrint
             if ($cssFile == "." || $cssFile == "..")
                 continue;
 
-            $link = $this->dom->createElement('link');
-            $link->setAttribute('rel', 'stylesheet');
-            $link->setAttribute('type', 'text/css');
-            $link->setAttribute('href', '../../Resources/CSS/' . $cssFile);
-            $output[] = $link;
+            $output[] = file_get_contents($dirName . DIRECTORY_SEPARATOR . $cssFile);
         }
 
-        return $output;
+        $response = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', trim(implode("\n\n", array_unique($output))));
+        return $this->dom->createElement('style', $response);
     }
 
     public function setCSS($css)
@@ -265,6 +254,36 @@ class ArrayPrettyPrint
     {
         $this->data = $data;
         return $this;
+    }
+
+    public static function getTogglerJS(){
+        $parts = array(dirname(__DIR__), "Resources", "JS", "toggler.js");
+        return "window.onload = function(){" . file_get_contents(implode(DIRECTORY_SEPARATOR, $parts)) . "}";
+    }
+
+    public function createHead($includeCss = true, $title = "PrettyPrinted"){
+        $head = $this->dom->createElement('head');
+        $head->appendChild(new \DOMElement('title', $title));
+
+        /* CSS */
+        if ($css = $this->getCSS($includeCss))
+            $head->appendChild($css);
+
+        /* Vendor */
+        $scriptTag1 = $this->dom->createElement('script');
+        $scriptTag1->setAttribute('src', '//code.jquery.com/jquery-2.0.3.js');
+        $scriptTag2 = $this->dom->createElement('script');
+        $scriptTag2->setAttribute('src', '//code.jquery.com/ui/1.11.4/jquery-ui.js');
+
+        /* Local */
+        $scriptTag3 = $this->dom->createElement('script', $this::getTogglerJS());
+
+        foreach (range(1,3) as $i){
+            $element = 'scriptTag' . $i;
+            if ($element) $head->appendChild($$element);
+        }
+
+        return $head;
     }
 }
 

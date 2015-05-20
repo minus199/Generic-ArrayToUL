@@ -19,8 +19,8 @@ include $fileName;
 /* Debugging!! */
 
 /* Instantiate prettier */
-$instance = ArrayPrettyPrint::factory($data);
-$output = $instance->prettify()->asHTML(true, true, true, true);
+$instance = \MiNuS199\ArrayPrettyPrint::factory($data);
+$output = $instance->prettify()->asHTML(true, true, true, false);
 
 /* Save into html flie */
 $f = $baseDir . "Example" . DIRECTORY_SEPARATOR . "HTML" . DIRECTORY_SEPARATOR . "index.html";

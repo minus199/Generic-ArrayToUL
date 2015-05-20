@@ -1,5 +1,24 @@
-﻿input:focus {outline:none;}
+﻿input:focus {
+    outline: none;
+}
+#recursive{
+    width: 45%;
+}
 
+.hovering-item{
+    border: 1px dashed black;
+    background-color: floralwhite;
+    width: 20%;
+}
+
+#tempContainer {
+    right: 0;
+    width: 15%;
+    height: 100%;
+    border: 1px dashed black;
+    position: absolute;
+    background-color: floralwhite;
+}
 
 ul {
     color: #eee;
@@ -24,8 +43,9 @@ ul li {
     height: 23px;
     margin-left: 10px;
 }
-input[type='button']{
-    position:fixed;
+
+input[type='button'] {
+    position: fixed;
 }
 
 input.collapsedTrue {
