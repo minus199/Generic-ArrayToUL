@@ -3,22 +3,23 @@
  */
 /* Query Builder */
     function queryBuilder(){
-        var output = {};
+        var o = {};
+        $.each($("#tempContainer").children("li"), function(){
+            var output = {};
 
-        $.each($("#tempContainer>li"),
-            function () {
-                var criteria = [];
-                $.each($(this).find("input[type='radio']:checked"), function(){  criteria.push($(this).val()) });
+            $.each($(this).next("ul").children("li"), function(){
+                //$.each($(this).find("input[type='radio']:checked"), function(){ criteria.push($(this).val()) });
+                var criteria = $(this).find("input[type='radio']:checked").val();
+                output['criteria'] = criteria ? criteria : "FROM";
 
                 var current = $(this).clone().children().remove().end().text().split(": ");
-                output[current[0]] = {
-                    value: current[1],
-                    criteria: criteria
-                };
-            }
-        );
+                output[current[0]] = current[1];
+            });
 
-        return output;
+            o[$(this).text()] = output;
+        });
+
+        return o;
     }
 
     function createQueryBuilderButtons($allowMultie){
@@ -32,7 +33,7 @@
             currentSpan.append($label);
 
             var $radio = $("<input/>", {type: 'radio', value: x});
-            if ($allowMultie === undefined){
+            if ($allowMultie !== undefined){
                 $radio.attr('name', 'query_radio_input');
             }
             currentSpan.append($radio);

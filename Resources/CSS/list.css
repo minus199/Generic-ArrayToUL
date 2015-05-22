@@ -19,13 +19,19 @@
     margin: 10px;
 }
 
+.temp_sub_item{
+    display: inline-block;
+    padding-bottom: 20px;
+    border-bottom: thin groove;
+}
+
 .containerHover {
     -webkit-box-shadow: inset 0 0 40px -2px rgba(0, 0, 0, 0.57);
 }
 
 #tempContainer>li{
     display: block;
-    padding: 10px;
+    padding-bottom: 20px;
 }
 
 .radioContainer{

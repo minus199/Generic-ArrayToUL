@@ -111,7 +111,7 @@
 
             var $ul = $("<ul/>");
             $.each (group, function(index, item){
-                item.toggleClass("top_level");
+                item.toggleClass("top_level").toggleClass("temp_sub_item");
                 $ul.append(item);
             });
 
@@ -126,8 +126,8 @@
         window.unsorted.attr("id", "tempContainer");
         var newContainer = $container.replaceWith(window.unsorted);
         $("#tempContainer")
-                   .droppable(that.getDroppableOptions())
-                   .sortable(that.getSortableOptions());
+           .droppable(that.getDroppableOptions())
+           .sortable(that.getSortableOptions());
         window.unsorted = null;
 
         return newContainer;
