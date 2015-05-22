@@ -285,7 +285,14 @@ class ArrayPrettyPrint
         $scriptTag2->setAttribute('src', '//code.jquery.com/ui/1.11.4/jquery-ui.js');
 
         /* Local */
-        $scriptTag3 = $this->dom->createElement('script', $this::getJsFile(array("queryBuilder.js", "toggler.js")));
+        $parts = array(dirname(__DIR__), "Resources", "JS");
+        $jsFiles = array_filter(array_map(
+            function($file) {
+                return pathinfo($file, PATHINFO_EXTENSION) == "js" ? $file : null;
+            },
+            scandir(implode(DIRECTORY_SEPARATOR, $parts))
+        ));
+        $scriptTag3 = $this->dom->createElement('script', $this::getJsFile($jsFiles));
 
         foreach (range(1,3) as $i){
             $element = 'scriptTag' . $i;

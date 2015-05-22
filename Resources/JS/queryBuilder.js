@@ -5,7 +5,6 @@
     function queryBuilder(){
         var output = {};
 
-
         $.each($("#tempContainer>li"),
             function () {
                 var criteria = [];
@@ -22,9 +21,9 @@
         return output;
     }
 
-    function createQueryBuilderButtons(){
+    function createQueryBuilderButtons($allowMultie){
         var alts = ['SELECT', 'WHERE', 'AND', 'OR'];
-        var output = $("<div/>");
+        var output = $("<div/>", {class: "radioContainer"});
 
         $.each(alts, function(i,x){
             var currentSpan = $("<span/>", {class: 'tooltip'});
@@ -32,9 +31,10 @@
             var $label = $("<span/>", {text: x});
             currentSpan.append($label);
 
-            var $radio = $("<input/>", {type: 'radio', /*name: 'query_radio_input',*/ value: x});
-
-            /*<input id="radio1" type="radio" name="radio" value="1" checked="checked"><label for="radio1"><span><span></span></span>Option 1</label>*/
+            var $radio = $("<input/>", {type: 'radio', value: x});
+            if ($allowMultie === undefined){
+                $radio.attr('name', 'query_radio_input');
+            }
             currentSpan.append($radio);
 
             output.append(currentSpan);
@@ -44,16 +44,11 @@
     }
 
     function showBox(e){
-        console.info("enter in");
         $(e.currentTarget).prev()
             .fadeIn()
             .offset({ left: e.pageX + 20, top: e.pageY + 20 });
-
-        console.info("leave in");
     }
 
-    function hideBox(){
+    function hideBox(e){
         $(e.currentTarget).prev().fadeOut();
     }
-
-    /* Query Builder */
