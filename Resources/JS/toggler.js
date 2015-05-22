@@ -3,33 +3,87 @@
  */
     var $ = jQuery;
 
-    $("document").ready(
-        function () {
-            var $container = $("#recursive");
+    window.onload = function() {
+        $("document").ready(
+            function () {
+                $.expr[":"].containsExact = function (obj, index, meta, stack) {
+                    obj = $(obj).clone().children().remove().end();
+                    return (obj.textContent || obj.innerText || $(obj).text() || "") == meta[3];
+                };
 
-            makeItToggle($container);
-            $("#toggleTree").click(function () {
-                toggleProjectTree($container, $(this));
-            });
+                $.fn.ignore = function (sel) {
+                    return this.clone().find(sel || ">*").remove().end();
+                };
 
-            draggableDroppable();
-        }
-    );
+                var $container = $("#recursive");
+
+                makeItToggle($container);
+                $("#toggleTree").click(function () {
+                    toggleProjectTree($container, $(this));
+                });
+
+                draggableDroppable();
+
+                $("#tempContainer").on('mouseenter', "input[type='radio']", showBox);
+                $("#tempContainer").on('mouseleave', "input[type='radio']", function(){console.log("out")});
+            }
+        );
+    }
+
+
 
     function draggableDroppable(){
         $(".regular-item").draggable(
             {
                 revert: true,
                 cursor:'move',
-                start: function( event, ui ) { $(this).toggleClass('hovering-item'); },
-                stop: function( event, ui ) { $(this).toggleClass('hovering-item'); }
+                start: function( event, ui ) {
+                    $(this).toggleClass('hovering-item'); },
+                stop: function( event, ui ) {
+                    $(this).toggleClass('hovering-item'); }
             }
         );
+
         $("#tempContainer").droppable(
             {
+                activate: function (ev, ui){
+                    $("#tempContainer").css({'border-width': '1px', 'border-style': 'dashed', 'border-color': 'black'});
+                },
+                deactivate: function( event, ui ) {
+                    $("#tempContainer").css({'border-width': '0px', 'border-style': 'dashed', 'border-color': 'black'});
+                },
                 drop: function( event, ui ) {
-                    var $newListItem = $("<li/>", {text: ui.draggable.text()});
-                    $(this).append($newListItem);
+                    /* extracted text from draggable */
+                    var tableName = ui.draggable.parents().prev("li").last().text();
+
+                    
+
+
+                    /* Append/update li */
+                    var textToFind = ui.draggable.clone().children().remove().end().text();
+                    var matchedByText = $(this).find("li:containsExact(" + textToFind + ")");
+
+                    var $liElement;
+                    if (matchedByText.length){
+                        $liElement = matchedByText.eq(0);
+                        var $liSpan = $liElement.find("span").eq(0);
+                        $liSpan.text($liSpan.text() == 0 ? "[1]" : "[" + (parseInt($liSpan.text().replace(/\D/g,'')) + 1) + "]");
+                    }else{
+                        $liElement = $("<li/>", {text: ui.draggable.text()});
+                        $liElement.append($("<span/>"));
+
+                        $liElement.append(createQueryBuilderButtons());
+
+                        $(this).append($liElement);
+                        $(this). switchClass('containerHover', "containerNonHover", 3000, "easeInOutQuad" );
+                    }
+
+                },
+                over: function (e, ui){
+                    $(this).addClass("containerNonHover"). switchClass("containerNonHover", 'containerHover', 3000, "easeInOutQuad" );
+                },
+                out: function (e, ui){
+                    $(this). switchClass('containerHover', "containerNonHover", 3000, "easeInOutQuad" );
                 },
                 tolerance: "pointer",
                 accept: '.regular-item'
@@ -67,3 +121,7 @@
             $button.attr("class", "collapsedTrue").val("+");
         }
     }
+
+
+
+

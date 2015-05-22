@@ -167,7 +167,6 @@ class ArrayPrettyPrint
         if (!$this->unorderedList)
             throw new \Exception("Must prettify first!");
 
-
         if (!$wrapWithPage)
             return $this->unorderedList->saveHTML();
 
@@ -213,7 +212,8 @@ class ArrayPrettyPrint
             if ($cssFile == "." || $cssFile == "..")
                 continue;
 
-            $output[] = file_get_contents($dirName . DIRECTORY_SEPARATOR . $cssFile);
+            if (pathinfo($cssFile, PATHINFO_EXTENSION) == 'css')
+                $output[] = file_get_contents($dirName . DIRECTORY_SEPARATOR . $cssFile);
         }
 
         $response = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', trim(implode("\n\n", array_unique($output))));
@@ -256,9 +256,18 @@ class ArrayPrettyPrint
         return $this;
     }
 
-    public static function getTogglerJS(){
-        $parts = array(dirname(__DIR__), "Resources", "JS", "toggler.js");
-        return "window.onload = function(){" . file_get_contents(implode(DIRECTORY_SEPARATOR, $parts)) . "}";
+    public static function getJsFile($fileName){
+        if (is_array($fileName)){
+            $output = '';
+            foreach($fileName as $name){
+                $output .= self::getJsFile($name) . PHP_EOL;
+            }
+
+            return $output;
+        } else {
+            $parts = array(dirname(__DIR__), "Resources", "JS", $fileName);
+            return file_get_contents(implode(DIRECTORY_SEPARATOR, $parts));
+        }
     }
 
     public function createHead($includeCss = true, $title = "PrettyPrinted"){
@@ -276,7 +285,7 @@ class ArrayPrettyPrint
         $scriptTag2->setAttribute('src', '//code.jquery.com/ui/1.11.4/jquery-ui.js');
 
         /* Local */
-        $scriptTag3 = $this->dom->createElement('script', $this::getTogglerJS());
+        $scriptTag3 = $this->dom->createElement('script', $this::getJsFile(array("queryBuilder.js", "toggler.js")));
 
         foreach (range(1,3) as $i){
             $element = 'scriptTag' . $i;
