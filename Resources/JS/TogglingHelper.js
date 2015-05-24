@@ -2,9 +2,7 @@
      * Created by minus on 5/22/15.
      */
 
-    var Toggler = function () {
-
-    };
+    var Toggler = function () {};
 
     Toggler.prototype.init = function () {
         this.makeItToggle($("#recursive"));
@@ -20,10 +18,6 @@
         $("#toggleTree").click(function () {
             that.toggleProjectTree($("#recursive"), $(this));
         });
-
-        $("#tempContainer")
-            .on('mouseenter', "input[type='radio']", showBox)
-            .on('mouseleave', "input[type='radio']", hideBox);
     };
 
     Toggler.prototype.makeItToggle = function ($container) {

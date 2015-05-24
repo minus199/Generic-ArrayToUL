@@ -10,7 +10,9 @@
     }
   ],
   "minimum-stability": "stable",
-  "require": {},
+  "require": {
+
+  },
   "repositories": [
     {
       "type": "git",
@@ -18,6 +20,6 @@
     }
   ],
   "autoload": {
-      "psr-4": {"MiNuS199\\": "src/"}
+    "psr-4": {"MiNuS199\\": "src/"}
   }
 }

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+./vendor/UglifyJS2/bin/uglifyjs\
+ --wrap=TogglerJS\
+ --export-all\
+ --source-map Resources/JS.min/src.map\
+ --compress drop_console,cascade,join_vars,if_return,hoist_funs,hoist_vars,unused,loops,booleans,evaluate,dead_code,comparisons,sequences,drop_debugger,conditionals\
+ --mangle\
+ -- $1;

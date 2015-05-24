@@ -1,6 +1,9 @@
 <?php
 
 namespace MiNuS199;
+
+require_once 'vendor/autoload.php';
+
 /**
  * Created by PhpStorm.
  * User: minus
@@ -30,12 +33,12 @@ class ArrayPrettyPrint
         $this->unorderedList->setAttribute('id', $id);
     }
 
-    private function startHTML($includeCss)
+    private function startHTML($includeCss, $includeJS)
     {
         $this->html = $this->dom->createElement('html');
 
         $this->html
-            ->appendChild($this->createHead($includeCss));
+            ->appendChild($this->createHead($includeCss, $includeJS));
 
         return $this->html;
     }
@@ -113,8 +116,8 @@ class ArrayPrettyPrint
                 /* The title of the group */
                 $valueContainer = $this->dom->createElement('span', ucfirst($k));
                 if (is_array($v))
-                    if (empty($v)){
-                        $codeElement = $this->dom->createElement("code" , "[Empty]");
+                    if (empty($v)) {
+                        $codeElement = $this->dom->createElement("code", "[Empty]");
                         $valueContainer->appendChild($codeElement);
                     }
 
@@ -162,7 +165,7 @@ class ArrayPrettyPrint
         return $this;
     }
 
-    public function asHTML($wrapWithPage = false, $includeCSS = false, $includeToggleButton = false, $prettifyHTML = true)
+    public function asHTML($wrapWithPage = false, $includeCSS = false, $includeJS = false, $includeToggleButton = false, $prettifyHTML = true)
     {
         if (!$this->unorderedList)
             throw new \Exception("Must prettify first!");
@@ -181,7 +184,7 @@ class ArrayPrettyPrint
         }
 
         $body->appendChild($this->unorderedList);
-        $this->startHTML($includeCSS)->appendChild($body);
+        $this->startHTML($includeCSS, $includeJS)->appendChild($body);
 
         $this->dom->appendChild($this->html);
 
@@ -208,7 +211,7 @@ class ArrayPrettyPrint
 
         $dirName = dirname(__DIR__) . DIRECTORY_SEPARATOR . "Resources" . DIRECTORY_SEPARATOR . "CSS";
         $output = array();
-        foreach (scandir($dirName) as $cssFile){
+        foreach (scandir($dirName) as $cssFile) {
             if ($cssFile == "." || $cssFile == "..")
                 continue;
 
@@ -256,21 +259,27 @@ class ArrayPrettyPrint
         return $this;
     }
 
-    public static function getJsFile($fileName){
-        if (is_array($fileName)){
-            $output = '';
-            foreach($fileName as $name){
-                $output .= self::getJsFile($name) . PHP_EOL;
-            }
+    public static function getJsFile($uglify = true)
+    {
+        /*$lastModificationTimeForJs = `find $jsFolderPath -printf "%T+\n" | sort -nr | head -n 1`;
+        $lastModificationTimeForUnifiedFile = `find $unifiedFilePath -printf "%T+\n" | sort -nr | head -n 1`;*/
+        /* There were changes since unified file was last written */
+        /*if ($lastModificationTimeForJs > $lastModificationTimeForUnifiedFile) {*/
 
-            return $output;
-        } else {
-            $parts = array(dirname(__DIR__), "Resources", "JS", $fileName);
-            return file_get_contents(implode(DIRECTORY_SEPARATOR, $parts));
-        }
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveCallbackFilterIterator(new CustomJsRecursiveIterator(false),
+            function (/* @var $var \SplFileInfo */ $var) {
+                return $var && ($var->getFilename() != "." && $var->getFilename() != "..");
+            }
+        ));
+
+        /* @var $customIterator CustomJsRecursiveIterator */
+        $customIterator = $iterator->getSubIterator();
+        return $customIterator->getUglifiedContent();
     }
 
-    public function createHead($includeCss = true, $title = "PrettyPrinted"){
+    public function createHead($includeCss = true, $includeJS = true, $title = "PrettyPrinted")
+    {
         $head = $this->dom->createElement('head');
         $head->appendChild(new \DOMElement('title', $title));
 
@@ -278,23 +287,19 @@ class ArrayPrettyPrint
         if ($css = $this->getCSS($includeCss))
             $head->appendChild($css);
 
+        if (!$includeJS) {
+            return $head;
+        }
+
         /* Vendor */
         $scriptTag1 = $this->dom->createElement('script');
         $scriptTag1->setAttribute('src', '//code.jquery.com/jquery-2.0.3.js');
         $scriptTag2 = $this->dom->createElement('script');
         $scriptTag2->setAttribute('src', '//code.jquery.com/ui/1.11.4/jquery-ui.js');
 
-        /* Local */
-        $parts = array(dirname(__DIR__), "Resources", "JS");
-        $jsFiles = array_filter(array_map(
-            function($file) {
-                return pathinfo($file, PATHINFO_EXTENSION) == "js" ? $file : null;
-            },
-            scandir(implode(DIRECTORY_SEPARATOR, $parts))
-        ));
-        $scriptTag3 = $this->dom->createElement('script', $this::getJsFile($jsFiles));
+        $scriptTag3 = $this->dom->createElement('script', self::getJsFile());
 
-        foreach (range(1,3) as $i){
+        foreach (range(1, 3) as $i) {
             $element = 'scriptTag' . $i;
             if ($element) $head->appendChild($$element);
         }

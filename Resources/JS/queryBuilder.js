@@ -2,13 +2,14 @@
  * Created by minus on 5/22/15.
  */
 /* Query Builder */
-    function queryBuilder(){
+
+var QueryBuilder = function (){};
+    QueryBuilder.prototype.queryBuilder = function (){
         var o = {};
         $.each($("#tempContainer").children("li"), function(){
             var output = {};
 
             $.each($(this).next("ul").children("li"), function(){
-                //$.each($(this).find("input[type='radio']:checked"), function(){ criteria.push($(this).val()) });
                 var criteria = $(this).find("input[type='radio']:checked").val();
                 output['criteria'] = criteria ? criteria : "FROM";
 
@@ -20,36 +21,26 @@
         });
 
         return o;
-    }
+    };
 
-    function createQueryBuilderButtons($allowMultie){
+    QueryBuilder.prototype.createQueryBuilderButtons = function ($allowMulti, sorted){
         var alts = ['SELECT', 'WHERE', 'AND', 'OR'];
-        var output = $("<div/>", {class: "radioContainer"});
+        var output = $("<div/>", {class: "radioContainer" + (sorted !== undefined ? "Sorted" : "")});
 
         $.each(alts, function(i,x){
-            var currentSpan = $("<span/>", {class: 'tooltip'});
+            var $radio = $("<input/>", {type: 'radio', value: x, title: x});
+            $radio.tooltip({
+                'data-toggle': "tooltip",
+                'data-placement': "bottom",
+                delay: { "show": 100, "hide": 200 }
+            });
 
-            var $label = $("<span/>", {text: x});
-            currentSpan.append($label);
-
-            var $radio = $("<input/>", {type: 'radio', value: x});
-            if ($allowMultie !== undefined){
-                $radio.attr('name', 'query_radio_input');
+            if ($allowMulti !== undefined){
+                $radio.attr('name', 'query_radio_input_' + $(".radioContainer").length);
             }
-            currentSpan.append($radio);
 
-            output.append(currentSpan);
+            output.append($radio);
         });
 
         return output;
-    }
-
-    function showBox(e){
-        $(e.currentTarget).prev()
-            .fadeIn()
-            .offset({ left: e.pageX + 20, top: e.pageY + 20 });
-    }
-
-    function hideBox(e){
-        $(e.currentTarget).prev().fadeOut();
-    }
+    };

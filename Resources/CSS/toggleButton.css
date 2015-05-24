@@ -3,7 +3,7 @@ input:focus {
     outline: none;
 }
 
-input[type='button'] {
+#toggleTree {
     position: fixed;
 }
 
@@ -37,3 +37,59 @@ input.collapsedFalse {
     -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, .75);
     box-shadow: 0px 0px 5px rgba(0, 0, 0, .75);
 }
+
+td{
+    padding: 5px !important;
+}
+
+#buttonsContainer{
+    position: absolute;
+    top: 60px;
+    right: 5px;
+}
+
+.togglers {
+	-webkit-box-shadow: 0px 10px 14px -7px #276873;
+	box-shadow: 0px 10px 14px -7px #276873;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #599bb3), color-stop(1, #408c99));
+    -webkit-border-radius:12px;
+	border:1px solid #29668f;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+
+	font-family:Arial;
+	font-size:14px;
+	padding:9px 17px;
+	text-decoration:none;
+	text-shadow:-1px 3px 24px #3d768a;
+}
+
+.togglers:hover {
+	background:-webkit-linear-gradient(top, #408c99 5%, #599bb3 100%);
+}
+
+.togglers:active {
+	position:relative;
+	/*top:1px;*/
+}
+/*
+
+#sortToggle {
+    top: 0;
+    right: 0;
+    padding: 5px;
+    z-index: 11;
+    margin-right: 20px;
+    margin-top: 5px;
+}
+
+#toArray {
+    top: 0;
+    right: 105px;
+    padding: 5px;
+    z-index: 11;
+    margin-right: 20px;
+    margin-top: 5px;
+    display: inline;
+}*/
