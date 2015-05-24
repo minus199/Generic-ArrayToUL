@@ -3,6 +3,8 @@
      */
     var $ = jQuery;
 
+    var TogglerJS;
+
     window.onload = function () {
         $("document").ready(
             function () {
@@ -15,12 +17,8 @@
                     return this.clone().find(sel || ">*").remove().end();
                 };
 
-                window.togglerJS = new Toggler();
-                window.queryBuilder = new QueryBuilder();
-
+                TogglerJS = new Toggler();
                 getBootstrap();
-                window.togglerJS.init();
-
                 appendMenuButton();
             }
         );
@@ -33,7 +31,7 @@
             id: 'sortToggle',
             value: 'Toggle Sorting'
         }).hide().click(function () {
-            var state = window.uiHelper.toggleSorted() ? 'Sort On' : 'Sort Off';
+            var state = TogglerJS.uiHelper.toggleSorted() ? 'Sort On' : 'Sort Off';
             $(this).val(state);
             $('#toArray').fadeToggle();
             $("#resetList").fadeToggle();
@@ -42,11 +40,11 @@
         var $sortedToArray = $("<input/>", {type: 'button', 'class': 'togglers', id: 'toArray', value: 'To Array'});
         $sortedToArray
             .hide()
-            .click(window.queryBuilder.queryBuilder);
+            .click(TogglerJS.queryBuilder.queryBuilder);
 
         var $resetTempList = $("<input/>", {type: 'button', 'class': 'togglers', id: 'resetList', value: 'Clear List'});
         $resetTempList.hide().click(function() {
-            window.uiHelper.reset();
+            TogglerJS.uiHelper.reset();
         });
 
         var buttons = [$sortToggleButton, $sortedToArray, $resetTempList];

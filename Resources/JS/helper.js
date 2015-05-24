@@ -1,5 +1,6 @@
     /**
      * Created by minus on 5/22/15.
+     * ~loading: 1
      */
     var UI = function () { this.container = $("#tempContainer"); };
 
@@ -34,7 +35,7 @@
                     $liElement = $("<li/>", {text: ui.draggable.text(), class: "top_level", ref: tableName});
                     $liElement.append($("<span/>"));
 
-                    $liElement.append(window.queryBuilder.createQueryBuilderButtons());
+                    $liElement.append(TogglerJS.queryBuilder.createQueryBuilderButtons());
 
                     $(this).append($liElement);
                     $(this).switchClass('containerHover', "containerNonHover", 3000, "easeInOutQuad");
@@ -103,6 +104,7 @@
     };
 
     UI.prototype.sort = function($container){
+        /* TODO: Move unsorted to this */
         window.unsorted = $container.clone();
         window.unsorted.attr("id", "clonedTemp");
 
@@ -135,7 +137,7 @@
                 item.switchClass("top_level", "temp_sub_item", 2000);
 
                 item.children("div").detach();
-                item.append(window.queryBuilder.createQueryBuilderButtons(false, true));
+                item.append(TogglerJS.queryBuilder.createQueryBuilderButtons(false, true));
             });
 
             $container.find("ul")

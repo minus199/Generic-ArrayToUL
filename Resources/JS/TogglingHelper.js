@@ -2,13 +2,16 @@
      * Created by minus on 5/22/15.
      */
 
-    var Toggler = function () {};
+    var Toggler = function () {
+        this.init();
+    };
 
     Toggler.prototype.init = function () {
-        this.makeItToggle($("#recursive"));
+        this.queryBuilder = new QueryBuilder();
+        this.uiHelper = new UI();
 
-        window.uiHelper = new UI();
-        window.uiHelper.draggableDroppableSortable();
+        this.makeItToggle($("#recursive"));
+        this.uiHelper.draggableDroppableSortable();
 
         this.appendEventListeners();
     };

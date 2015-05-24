@@ -267,11 +267,8 @@ class ArrayPrettyPrint
         /*if ($lastModificationTimeForJs > $lastModificationTimeForUnifiedFile) {*/
 
 
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveCallbackFilterIterator(new CustomJsRecursiveIterator(false),
-            function (/* @var $var \SplFileInfo */ $var) {
-                return $var && ($var->getFilename() != "." && $var->getFilename() != "..");
-            }
-        ));
+        $iterator = new \RecursiveIteratorIterator(new CustomJsRecursiveIterator(false));
+
 
         /* @var $customIterator CustomJsRecursiveIterator */
         $customIterator = $iterator->getSubIterator();

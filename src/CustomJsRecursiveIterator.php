@@ -9,6 +9,8 @@
 namespace MiNuS199;
 
 
+use GK\JavascriptPacker;
+
 class CustomJsRecursiveIterator extends \RecursiveDirectoryIterator
 {
     private $filesToUglify = array(), $uglify = true, $DirectoriesMapper;
@@ -17,6 +19,8 @@ class CustomJsRecursiveIterator extends \RecursiveDirectoryIterator
 
     public function __construct($path = true, $flags = null)
     {
+        `grunt`;
+
         $this->setDirectoriesMapper();
 
         $path = $path ? $path : $this->getDirectoriesMapper()->getMinJsFolder();
@@ -32,21 +36,37 @@ class CustomJsRecursiveIterator extends \RecursiveDirectoryIterator
 
     public function current()
     {
-        if (!parent::isDir()) {
-            $file = parent::openFile();
-            $current = '';
+        /* @var $current \SplFileInfo */
+        $current = parent::current();
+
+        if ($current->isFile() && $current->getExtension() == "js"){
+            $file = $current->openFile();
+
+            $content = '';
             while ($file->current()) {
-                $current .= $file->current();
+                $content .= $file->current();
                 $file->next();
             }
 
-            $this->filesToUglify[] = $current;
+            if (preg_match('!~loading: (?P<loading>[\d]+)!', $current, $matches)){
+                $this->filesToUglify[(int)$matches['loading']] = $content;
+            } else {
+                $this->filesToUglify[] = $content;
+            }
 
-            return parent::current();
+            unlink($file->getRealPath());
+
+            return $current;
         }
 
         return false;
     }
+
+    public function next()
+    {
+        parent::next();
+    }
+
 
     public function iterateTillEnd(){
         while($this->current()) { $this->next(); }
@@ -57,24 +77,44 @@ class CustomJsRecursiveIterator extends \RecursiveDirectoryIterator
         $this->getDirectoriesMapper()->getUnifiedFilePath();
     }
 
+    public function getContent(){
+        if ($this->uglify)
+            return $this->getUglifiedContent();
+
+        return $this->getNormalContent();
+    }
+
+    private function getNormalContent(){
+        return implode("\n\n", $this->iterateTillEnd()->filesToUglify);
+    }
+
     /**
      * @return array
      */
-    public function getUglifiedContent()
+    private function getUglifiedContent()
     {
-        if (!$this->uglify)
-            return false;
-
         if (file_exists($this->getDirectoriesMapper()->getUnifiedFilePath())) {
-            $handle = fopen($this->getDirectoriesMapper()->getUnifiedFilePath(), "r");
-            $content = fopen($handle, filesize($this->getDirectoriesMapper()->getUnifiedFilePath()));
-            fclose($handle);
-            return $content;
+            $jsFolderModifiedTime = (float)reset(explode(" ", `find {$this->getDirectoriesMapper()->getJsFolderPath()} -type f -printf '%T@ %p\n' | sort -n | tail -1`));
+            $jsUnifiedModifiedTime = (float)reset(explode(" ", `find {$this->getDirectoriesMapper()->getUnifiedFilePath()} -type f -printf '%T@ %p\n' | sort -n | tail -1`));
+
+            if ($jsFolderModifiedTime < $jsUnifiedModifiedTime){
+                $handle = fopen($this->getDirectoriesMapper()->getUnifiedFilePath(), "r");
+                $content = fread($handle, filesize($this->getDirectoriesMapper()->getUnifiedFilePath()));
+                fclose($handle);
+                return $content;
+            }
         }
 
-        var_dump($this->iterateTillEnd()->filesToUglify);
-        exit;
-        return implode("\n\n", $this->iterateTillEnd()->filesToUglify);
+        echo PHP_EOL . "[Enter save unified]" . PHP_EOL;
+        $uglified = implode("\n\n", $this->iterateTillEnd()->filesToUglify);
+        $packer = new JavascriptPacker($uglified);
+        $uglifiedContent = '!function (t, e) {' . $packer->pack() . '}({}, function () {return this}());';
+
+        $handle = fopen($this->getDirectoriesMapper()->getUnifiedFilePath(), "w+");
+        fwrite($handle, $uglifiedContent);
+        fclose($handle);
+
+        return $uglifiedContent;
     }
 
     /**

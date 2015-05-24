@@ -28,7 +28,7 @@ class DirectoriesMapper{
             ->setBasePath(array(dirname(__DIR__), "Resources"))
             ->setJsFolderPath("JS")
             ->setMinJsFolder()
-            ->setUnifiedFilePath(".min" . DIRECTORY_SEPARATOR . "togglerApp.min.js");
+            ->setUnifiedFilePath("togglerApp.min.js");
     }
 
     /**
@@ -45,7 +45,7 @@ class DirectoriesMapper{
      */
     private function setUnifiedFilePath($unifiedFilePath)
     {
-        $this->unifiedFilePath = $this->getJsFolderPath() . DIRECTORY_SEPARATOR . $unifiedFilePath;
+        $this->unifiedFilePath = $this->getMinJsFolder() . DIRECTORY_SEPARATOR . $unifiedFilePath;
         return $this;
     }
 
@@ -104,7 +104,7 @@ class DirectoriesMapper{
      */
     private function setMinJsFolder()
     {
-        $this->minJsFolder = $this->getJsFolderPath() . ".min";
+        $this->minJsFolder = $this->getBasePath() . DIRECTORY_SEPARATOR. "js-min";
         return $this;
     }
 }
