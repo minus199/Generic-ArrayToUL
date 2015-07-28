@@ -261,7 +261,7 @@ class ArrayPrettyPrint
         return "window.onload = function(){" . file_get_contents(implode(DIRECTORY_SEPARATOR, $parts)) . "}";
     }
 
-    public function createHead($includeCss = true, $title = "PrettyPrinted", $includeVendor = false){
+    public function createHead($includeCss = true, $title = "PrettyPrinted"){
         $head = $this->dom->createElement('head');
         $head->appendChild(new \DOMElement('title', $title));
 
@@ -269,13 +269,11 @@ class ArrayPrettyPrint
         if ($css = $this->getCSS($includeCss))
             $head->appendChild($css);
 
-        if ($includeVendor){
-            /* Vendor */
-            $scriptTag1 = $this->dom->createElement('script');
-            //$scriptTag1->setAttribute('src', '//code.jquery.com/jquery-2.0.3.js');
-            $scriptTag2 = $this->dom->createElement('script');
-            //$scriptTag2->setAttribute('src', '//code.jquery.com/ui/1.11.4/jquery-ui.js');
-        }
+        /* Vendor */
+        $scriptTag1 = $this->dom->createElement('script');
+        $scriptTag1->setAttribute('src', '//code.jquery.com/jquery-2.0.3.js');
+        $scriptTag2 = $this->dom->createElement('script');
+        $scriptTag2->setAttribute('src', '//code.jquery.com/ui/1.11.4/jquery-ui.js');
 
         /* Local */
         $scriptTag3 = $this->dom->createElement('script', $this::getTogglerJS());
