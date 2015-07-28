@@ -1,9 +1,6 @@
 ﻿input:focus {
     outline: none;
 }
-#recursive{
-    width: 45%;
-}
 
 .hovering-item{
     border: 1px dashed black;
