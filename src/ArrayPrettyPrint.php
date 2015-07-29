@@ -265,9 +265,16 @@ class ArrayPrettyPrint
         $head = $this->dom->createElement('head');
         $head->appendChild(new \DOMElement('title', $title));
 
+
         /* CSS */
         if ($css = $this->getCSS($includeCss))
             $head->appendChild($css);
+
+        $scriptTag = $this->dom->createElement('script', $this::getTogglerJS());
+        $head->appendChild($scriptTag);
+        return $head;
+
+        /* Leave this out for now */
 
         /* Vendor */
         $scriptTag1 = $this->dom->createElement('script');
